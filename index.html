@@ -1,587 +1,1153 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Ini Telah Pindah</title>
-    <style>
-        /* Reset & Base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pure Status · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal: #4B877B;
+  --teal-light: #62a899;
+  --teal-dim: #3a6b61;
+  --teal-glow: rgba(75,135,123,0.25);
+  --teal-ghost: rgba(75,135,123,0.08);
+  --bg: #0d1110;
+  --bg2: #111614;
+  --bg3: #161c1a;
+  --bg4: #1c2422;
+  --border: rgba(75,135,123,0.18);
+  --border-hover: rgba(75,135,123,0.4);
+  --text: #d4e8e3;
+  --text-muted: rgba(212,232,227,0.5);
+  --text-dim: rgba(212,232,227,0.3);
+  --danger: #c45d5d;
+  --warn: #d4924a;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Outfit', sans-serif;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
+*{margin:0;padding:0;box-sizing:border-box;}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            color: #e9f0ed;
-            background: #1a1e1d;
-            position: relative;
-            min-height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-        /* Parallax Background Layers */
-        .parallax-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
+/* ── Noise overlay ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.6;
+}
 
-        .parallax-layer {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            background-size: cover;
-            background-position: center;
-        }
+/* ── Layout ── */
+.shell{display:flex;min-height:100vh;position:relative;z-index:1;}
 
-        .layer-1 {
-            background: 
-                radial-gradient(circle at 20% 30%, #1a3a35 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, #2a5f54 0%, transparent 50%),
-                linear-gradient(135deg, #1a1e1d 0%, #202423 100%);
-            opacity: 0.8;
-            transform: translateZ(-2px) scale(1.2);
-        }
+/* ── Sidebar ── */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  overflow:hidden;
+}
 
-        .layer-2 {
-            background: 
-                radial-gradient(circle at 60% 20%, rgba(75, 135, 123, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(95, 168, 154, 0.2) 0%, transparent 50%);
-            opacity: 0.6;
-            transform: translateZ(-1px) scale(1.1);
-        }
+.sidebar-brand{
+  padding:28px 20px 20px;
+  border-bottom:1px solid var(--border);
+}
+.brand-logo{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--teal-dim),var(--teal-light));
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:12px;
+  box-shadow:0 0 20px var(--teal-glow);
+}
+.brand-name{
+  font-family:var(--mono);font-size:.75rem;
+  color:var(--teal-light);letter-spacing:.1em;text-transform:uppercase;
+}
+.brand-sub{font-size:.65rem;color:var(--text-muted);margin-top:2px;}
 
-        .layer-3 {
-            background: 
-                linear-gradient(45deg, transparent 30%, rgba(75, 135, 123, 0.1) 50%, transparent 70%),
-                linear-gradient(135deg, transparent 40%, rgba(75, 135, 123, 0.08) 60%, transparent 80%);
-            opacity: 0.4;
-            transform: translateZ(0) scale(1);
-        }
+.nav-section{padding:16px 12px 8px;flex:1;}
+.nav-label{
+  font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);padding:0 8px;margin-bottom:8px;font-family:var(--mono);
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:.15s;margin-bottom:3px;
+  font-size:.85rem;color:var(--text-muted);
+  border:1px solid transparent;
+  position:relative;
+}
+.nav-item:hover{color:var(--text);background:var(--teal-ghost);}
+.nav-item.active{
+  color:var(--teal-light);
+  background:rgba(75,135,123,0.12);
+  border-color:var(--border);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:var(--teal-light);border-radius:0 4px 4px 0;
+}
+.nav-icon{font-size:1rem;width:18px;text-align:center;}
 
-        /* Meteor Effect */
-        .meteor-shower {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
+.sidebar-footer{
+  padding:16px;border-top:1px solid var(--border);
+  font-size:.7rem;color:var(--text-dim);font-family:var(--mono);
+}
 
-        .meteor {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #5fa89a;
-            border-radius: 50%;
-            box-shadow: 
-                0 0 4px rgba(75, 135, 123, 0.9),
-                0 0 8px rgba(75, 135, 123, 0.7),
-                0 0 12px rgba(75, 135, 123, 0.5);
-            opacity: 0;
-        }
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;}
 
-        @keyframes meteorFall {
-            0% {
-                transform: translateX(-100px) translateY(-100px) rotate(45deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateX(100vw) translateY(100vh) rotate(45deg);
-                opacity: 0;
-            }
-        }
+.topbar{
+  padding:16px 28px;
+  border-bottom:1px solid var(--border);
+  background:rgba(13,17,16,.85);
+  backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.page-title{font-size:1rem;font-weight:600;color:var(--text);}
+.status-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:99px;
+  font-size:.72rem;font-family:var(--mono);
+  background:var(--teal-ghost);border:1px solid var(--border);color:var(--teal-light);
+}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--teal-glow);}50%{box-shadow:0 0 0 5px transparent;}}
 
-        /* Main Container */
-        .main-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.wa-number-display{
+  font-family:var(--mono);font-size:.8rem;color:var(--text-muted);
+  background:var(--teal-ghost);border:1px solid var(--border);
+  padding:6px 14px;border-radius:var(--radius-sm);
+}
 
-        /* Glass Card */
-        .glass-card {
-            background: rgba(26, 30, 29, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 28px;
-            padding: 60px 50px;
-            max-width: 800px;
-            width: 90%;
-            text-align: center;
-            border: 1px solid rgba(75, 135, 123, 0.2);
-            box-shadow: 
-                0 25px 60px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(75, 135, 123, 0.15) inset,
-                0 0 40px rgba(75, 135, 123, 0.1) inset;
-            animation: cardEntrance 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-            opacity: 0;
-            transform: translateY(30px);
-        }
+/* Stats Row */
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  padding:20px 28px 0;
+}
+.stat-box{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px 18px;
+  position:relative;overflow:hidden;
+}
+.stat-box::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at top left,var(--teal-ghost),transparent 60%);
+  pointer-events:none;
+}
+.stat-label{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.stat-value{font-family:var(--mono);font-size:1.6rem;font-weight:700;color:var(--teal-light);}
+.stat-sub{font-size:.68rem;color:var(--text-dim);margin-top:3px;}
 
-        @keyframes cardEntrance {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* ── Tab Content ── */
+.content{padding:20px 28px 40px;flex:1;}
+.tab-pane{display:none;animation:fadeUp .25s ease;}
+.tab-pane.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
-        /* Typography */
-        .title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 30px;
-            letter-spacing: 1.5px;
-            line-height: 1.1;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 0%, #5fa89a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 10px 30px rgba(75, 135, 123, 0.3);
-        }
+/* ── Cards ── */
+.card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius);padding:24px;margin-bottom:16px;
+}
+.card-title{
+  font-size:.75rem;font-family:var(--mono);color:var(--teal-light);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.card-title::before{content:'▸';color:var(--teal);}
 
-        .description {
-            font-size: 1.4rem;
-            line-height: 1.6;
-            margin-bottom: 40px;
-            color: #cce4ff;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0.9;
-        }
+/* ── Form elements ── */
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:7px;font-family:var(--mono);}
+.field input,.field select{
+  width:100%;padding:11px 14px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  font-family:var(--mono);font-size:.85rem;
+  transition:.15s;outline:none;
+}
+.field input:focus,.field select:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-ghost);}
+.field input::placeholder{color:var(--text-dim);}
 
-        /* URL Display */
-        .url-container {
-            background: rgba(26, 30, 29, 0.6);
-            border-radius: 16px;
-            padding: 24px;
-            margin: 35px 0;
-            border: 1px solid rgba(75, 135, 123, 0.25);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
+/* ── Buttons ── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:var(--radius-sm);
+  border:none;cursor:pointer;font-size:.85rem;font-family:var(--sans);
+  font-weight:500;transition:.15s;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--teal-dim),var(--teal));
+  color:#fff;box-shadow:0 2px 12px rgba(75,135,123,.3);
+}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn-ghost{
+  background:var(--teal-ghost);color:var(--teal-light);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{background:rgba(75,135,123,.18);border-color:var(--teal);}
+.btn-danger{background:rgba(196,93,93,.2);color:var(--danger);border:1px solid rgba(196,93,93,.3);}
+.btn-danger:hover{background:rgba(196,93,93,.35);}
+.btn-sm{padding:7px 14px;font-size:.78rem;}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;}
 
-        .url-container:hover {
-            border-color: rgba(75, 135, 123, 0.5);
-            box-shadow: 0 0 20px rgba(75, 135, 123, 0.2);
-        }
+/* ── Pairing Code ── */
+.pairing-code-box{
+  text-align:center;padding:32px 20px;
+  background:var(--bg2);border:1px dashed var(--border-hover);
+  border-radius:var(--radius);cursor:pointer;position:relative;
+  transition:.2s;margin:16px 0;
+}
+.pairing-code-box:hover{background:var(--bg4);border-color:var(--teal);}
+.pairing-code{
+  font-family:var(--mono);font-size:2.8rem;font-weight:700;
+  letter-spacing:.35em;color:var(--teal-light);
+  text-shadow:0 0 30px var(--teal-glow);
+}
+.pairing-hint{font-size:.72rem;color:var(--text-dim);margin-top:10px;font-family:var(--mono);}
+.copy-flash{
+  position:absolute;top:8px;right:12px;
+  font-size:.7rem;color:var(--teal-light);font-family:var(--mono);
+  opacity:0;transition:.3s;
+}
+.pairing-code-box.copied .copy-flash{opacity:1;}
 
-        .url-label {
-            display: block;
-            font-size: 1rem;
-            margin-bottom: 12px;
-            color: #5fa89a;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-        }
+/* ── Timer ── */
+.timer-bar-wrap{margin:12px 0;height:4px;background:var(--bg2);border-radius:99px;overflow:hidden;}
+.timer-bar{height:100%;background:linear-gradient(90deg,var(--teal-dim),var(--teal-light));border-radius:99px;transition:width .5s linear;}
+.timer-text{font-family:var(--mono);font-size:.78rem;color:var(--text-muted);text-align:right;margin-top:4px;}
 
-        .url {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ffffff;
-            word-break: break-all;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 0.5px;
-            text-shadow: 0 0 15px rgba(75, 135, 123, 0.4);
-        }
+/* ── Status badge ── */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:99px;font-size:.7rem;font-family:var(--mono);
+}
+.badge-connected{background:rgba(75,135,123,.15);color:var(--teal-light);border:1px solid var(--teal-dim);}
+.badge-pairing{background:rgba(212,146,74,.12);color:var(--warn);border:1px solid rgba(212,146,74,.3);}
+.badge-disconnected,.badge-default{background:rgba(196,93,93,.12);color:var(--danger);border:1px solid rgba(196,93,93,.3);}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
 
-        /* Main Button */
-        .main-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #4B877B 0%, #2a5f54 100%);
-            color: white;
-            font-size: 1.3rem;
-            font-weight: 700;
-            padding: 20px 50px;
-            border-radius: 14px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-            margin: 25px 0 40px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 
-                0 15px 35px rgba(75, 135, 123, 0.4),
-                0 0 0 1px rgba(255, 255, 255, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
+/* ── Upload area ── */
+.upload-area{
+  border:2px dashed var(--border);border-radius:var(--radius);
+  padding:48px 24px;text-align:center;cursor:pointer;
+  transition:.2s;background:var(--bg2);position:relative;overflow:hidden;
+}
+.upload-area.drag-over{border-color:var(--teal);background:var(--teal-ghost);}
+.upload-area:hover{border-color:var(--border-hover);}
+.upload-icon{font-size:2.5rem;margin-bottom:12px;opacity:.6;}
+.upload-label{font-size:.95rem;color:var(--text-muted);margin-bottom:6px;}
+.upload-hint{font-size:.72rem;color:var(--text-dim);font-family:var(--mono);}
+#file-input{display:none;}
 
-        .main-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-            transition: left 0.7s ease;
-        }
+/* Preview */
+.preview-wrap{display:none;margin:12px 0;}
+.preview-wrap.show{display:block;}
+.preview-img{max-height:180px;max-width:100%;border-radius:var(--radius-sm);object-fit:cover;}
+.preview-video{max-height:200px;max-width:100%;border-radius:var(--radius-sm);}
+.preview-meta{
+  display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;
+}
+.preview-chip{
+  font-family:var(--mono);font-size:.7rem;color:var(--text-muted);
+  background:var(--bg2);border:1px solid var(--border);
+  padding:3px 10px;border-radius:99px;
+}
 
-        .main-button:hover {
-            transform: translateY(-5px) scale(1.03);
-            box-shadow: 
-                0 20px 45px rgba(75, 135, 123, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.25);
-        }
+/* Progress */
+.progress-wrap{display:none;margin:12px 0;}
+.progress-wrap.show{display:block;}
+.progress-track{height:6px;background:var(--bg2);border-radius:99px;overflow:hidden;}
+.progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--teal-dim),var(--teal-light));
+  border-radius:99px;width:0%;transition:width .2s;
+}
+.progress-pct{font-family:var(--mono);font-size:.72rem;color:var(--teal-light);text-align:right;margin-top:4px;}
 
-        .main-button:hover::before {
-            left: 100%;
-        }
+/* Mode toggle */
+.mode-toggle{display:flex;gap:8px;margin-bottom:16px;}
+.mode-btn{
+  flex:1;padding:9px;text-align:center;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;
+  font-size:.8rem;font-family:var(--mono);color:var(--text-muted);
+  transition:.15s;
+}
+.mode-btn.active{background:var(--teal-ghost);border-color:var(--teal);color:var(--teal-light);}
 
-        .main-button:active {
-            transform: translateY(-2px) scale(1.01);
-            transition: transform 0.1s ease;
-        }
+/* File type select */
+.ftype-toggle{display:flex;gap:8px;margin-bottom:16px;}
+.ftype-btn{
+  flex:1;padding:8px;text-align:center;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;
+  font-size:.78rem;font-family:var(--mono);color:var(--text-muted);
+  transition:.15s;
+}
+.ftype-btn.active{background:var(--teal-ghost);border-color:var(--teal);color:var(--teal-light);}
 
-        /* Countdown */
-        .countdown {
-            font-size: 1.3rem;
-            color: #5fa89a;
-            margin-top: 35px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(75, 135, 123, 0.2);
-        }
+/* Result box */
+.result-box{
+  display:none;background:var(--bg2);border:1px solid var(--teal-dim);
+  border-radius:var(--radius);padding:20px;margin-top:16px;
+}
+.result-box.show{display:block;}
+.result-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--border);font-size:.82rem;
+}
+.result-row:last-child{border-bottom:none;}
+.result-key{color:var(--text-muted);font-family:var(--mono);font-size:.75rem;}
+.result-val{color:var(--teal-light);font-family:var(--mono);font-size:.8rem;word-break:break-all;text-align:right;max-width:60%;}
 
-        .countdown-number {
-            font-weight: 800;
-            color: #ffffff;
-            font-size: 1.6rem;
-            display: inline-block;
-            min-width: 40px;
-            text-shadow: 0 0 20px rgba(75, 135, 123, 0.6);
-            transition: all 0.3s ease;
-        }
+/* Sessions list */
+.session-item{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 16px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);margin-bottom:8px;
+  transition:.15s;
+}
+.session-item:hover{border-color:var(--border-hover);}
+.session-num{font-family:var(--mono);font-size:.9rem;color:var(--text);}
+.session-actions{display:flex;gap:8px;}
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .glass-card {
-                padding: 40px 30px;
-                width: 95%;
-                border-radius: 24px;
-            }
+/* Sub-tabs (for pure status ver1/ver2) */
+.subtab-row{display:flex;gap:4px;margin-bottom:20px;
+  background:var(--bg2);padding:4px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);width:fit-content;}
+.subtab{
+  padding:7px 18px;border-radius:6px;cursor:pointer;
+  font-size:.78rem;font-family:var(--mono);color:var(--text-muted);transition:.15s;
+}
+.subtab.active{background:var(--teal-ghost);color:var(--teal-light);border:1px solid var(--border);}
+.subtab-pane{display:none;}
+.subtab-pane.active{display:block;animation:fadeUp .2s ease;}
 
-            .title {
-                font-size: 2.5rem;
-            }
+/* ── Toast ── */
+.toast-container{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none;
+}
+.toast{
+  padding:12px 18px;border-radius:var(--radius-sm);
+  font-size:.8rem;font-family:var(--mono);min-width:240px;
+  border:1px solid;animation:toastIn .3s ease;
+  pointer-events:all;cursor:pointer;
+}
+.toast-success{background:rgba(13,17,16,.96);border-color:var(--teal-dim);color:var(--teal-light);}
+.toast-error{background:rgba(13,17,16,.96);border-color:rgba(196,93,93,.5);color:var(--danger);}
+.toast-info{background:rgba(13,17,16,.96);border-color:var(--border-hover);color:var(--text);}
+@keyframes toastIn{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:translateX(0);}}
+@keyframes toastOut{to{opacity:0;transform:translateX(12px);}}
 
-            .description {
-                font-size: 1.2rem;
-            }
+/* ── Grid helpers ── */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.flex-row{display:flex;gap:10px;align-items:center;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;}
+.gap-sm{gap:8px;}
+.mt-sm{margin-top:10px;}
+.mt-md{margin-top:16px;}
 
-            .url {
-                font-size: 1.2rem;
-            }
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--teal-dim);border-radius:99px;}
 
-            .main-button {
-                font-size: 1.1rem;
-                padding: 18px 40px;
-                width: 100%;
-                max-width: 350px;
-            }
-
-            .countdown {
-                font-size: 1.1rem;
-            }
-
-            .countdown-number {
-                font-size: 1.4rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .title {
-                font-size: 2rem;
-            }
-
-            .description {
-                font-size: 1.1rem;
-            }
-
-            .url {
-                font-size: 1rem;
-            }
-
-            .main-button {
-                font-size: 1rem;
-                padding: 16px 30px;
-            }
-
-            .layer-1,
-            .layer-2,
-            .layer-3 {
-                background-attachment: scroll;
-            }
-        }
-
-        /* Mobile-specific parallax adjustment */
-        @media (hover: none) and (pointer: coarse) {
-            .parallax-layer {
-                background-attachment: scroll;
-                transform: none !important;
-            }
-        }
-
-        /* Pulse animation for countdown */
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .pulse {
-            animation: pulse 1s ease-in-out;
-        }
-    </style>
+/* ── Mobile ── */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .row2{grid-template-columns:1fr;}
+  .content{padding:16px;}
+  .pairing-code{font-size:2rem;}
+}
+</style>
 </head>
 <body>
-    <!-- Parallax Background Layers -->
-    <div class="parallax-container" id="parallaxContainer">
-        <div class="parallax-layer layer-1"></div>
-        <div class="parallax-layer layer-2"></div>
-        <div class="parallax-layer layer-3"></div>
+
+<div class="shell">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">📡</div>
+      <div class="brand-name">Pure Status</div>
+      <div class="brand-sub">WA Dashboard</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Menu</div>
+      <div class="nav-item active" data-tab="pairing">
+        <span class="nav-icon">🔗</span> Pairing
+      </div>
+      <div class="nav-item" data-tab="purestatus">
+        <span class="nav-icon">📤</span> Pure Status
+      </div>
+      <div class="nav-item" data-tab="sessions">
+        <span class="nav-icon">📋</span> Sessions
+      </div>
+    </div>
+    <div class="sidebar-footer">BY @NandSkie</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title" id="page-title">Pairing</span>
+        <span class="status-pill"><span class="status-dot"></span><span id="topbar-status">ready</span></span>
+      </div>
+      <div class="topbar-right">
+        <div class="wa-number-display" id="topbar-number">—</div>
+      </div>
     </div>
 
-    <!-- Meteor Shower -->
-    <div class="meteor-shower" id="meteorShower"></div>
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-label">Connected</div>
+        <div class="stat-value" id="stat-connected">0</div>
+        <div class="stat-sub">active sessions</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Pairing</div>
+        <div class="stat-value" id="stat-pairing">0</div>
+        <div class="stat-sub">pending pair</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Requests</div>
+        <div class="stat-value" id="stat-requests">0</div>
+        <div class="stat-sub">total sent</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Success</div>
+        <div class="stat-value" id="stat-success">0</div>
+        <div class="stat-sub">successful</div>
+      </div>
+    </div>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="glass-card">
-            <h1 class="title">WEBSITE INI TELAH PINDAH</h1>
-            
-            <p class="description">
-                Website ini sudah tidak digunakan lagi.<br>
-                Pengguna diarahkan untuk mengunjungi website baru.
-            </p>
-            
-            <div class="url-container">
-                <span class="url-label">Alamat Website Baru:</span>
-                <div class="url" id="websiteUrl">https://pure.justnand.my.id/</div>
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── Tab: Pairing ── -->
+      <div class="tab-pane active" id="tab-pairing">
+        <div class="row2">
+          <div>
+            <div class="card">
+              <div class="card-title">Hubungkan Sesi</div>
+              <div class="field">
+                <label>Nomor WhatsApp</label>
+                <input type="text" id="wa-number" placeholder="628xxxxxxxxxx" autocomplete="off">
+              </div>
+              <div class="field">
+                <label>API Key</label>
+                <input type="password" id="api-key" placeholder="masukkan api key" autocomplete="off">
+              </div>
+              <div class="field">
+                <label>Base URL VPS</label>
+                <input type="text" id="base-url" placeholder="https://api.example.com" autocomplete="off">
+              </div>
+              <div class="flex-row mt-sm">
+                <button class="btn btn-primary" id="btn-connect">🔗 Hubungkan</button>
+                <button class="btn btn-danger btn-sm" id="btn-stop" style="display:none">⛔ Stop & Hapus</button>
+              </div>
             </div>
-            
-            <a href="https://pure.justnand.my.id/" class="main-button" id="redirectButton">
-                Kunjungi Website Baru
-            </a>
-            
-            <div class="countdown">
-                Anda akan dialihkan otomatis dalam <span class="countdown-number" id="countdown">10</span> detik
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="card-title">Kode Pairing</div>
+              <div id="pairing-area">
+                <div style="text-align:center;padding:40px 0;color:var(--text-dim);font-size:.85rem;">
+                  Masukkan nomor & klik Hubungkan
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elements
-            const countdownElement = document.getElementById('countdown');
-            const parallaxContainer = document.getElementById('parallaxContainer');
-            const meteorShower = document.getElementById('meteorShower');
-            
-            // Countdown variables
-            let countdownValue = 10;
-            let countdownInterval;
-            
-            // Start countdown
-            function startCountdown() {
-                countdownElement.textContent = countdownValue;
-                
-                countdownInterval = setInterval(() => {
-                    countdownValue--;
-                    countdownElement.textContent = countdownValue;
-                    
-                    // Add pulse animation every second
-                    countdownElement.classList.remove('pulse');
-                    void countdownElement.offsetWidth; // Trigger reflow
-                    countdownElement.classList.add('pulse');
-                    
-                    if (countdownValue <= 0) {
-                        clearInterval(countdownInterval);
-                        redirectToNewSite();
-                    }
-                }, 1000);
-            }
-            
-            // Redirect function
-            function redirectToNewSite() {
-                window.location.href = "https://pure.justnand.my.id/";
-            }
-            
-            // Parallax Effect
-            function initParallax() {
-                const layers = document.querySelectorAll('.parallax-layer');
-                
-                // Mouse move parallax for desktop
-                function handleMouseMove(e) {
-                    if (window.innerWidth > 768) { // Desktop only
-                        const x = (e.clientX / window.innerWidth - 0.5) * 2;
-                        const y = (e.clientY / window.innerHeight - 0.5) * 2;
-                        
-                        layers.forEach((layer, index) => {
-                            const speed = (index + 1) * 0.5;
-                            const xOffset = x * 20 * speed;
-                            const yOffset = y * 20 * speed;
-                            
-                            layer.style.transform = `translateX(${xOffset}px) translateY(${yOffset}px) ${getLayerTransform(index)}`;
-                        });
-                    }
-                }
-                
-                // Scroll parallax for mobile
-                function handleScroll() {
-                    const scrolled = window.pageYOffset;
-                    const rate = scrolled * -0.5;
-                    
-                    layers.forEach((layer, index) => {
-                        const speed = (index + 1) * 0.3;
-                        const yOffset = rate * speed;
-                        layer.style.transform = `translateY(${yOffset}px) ${getLayerTransform(index)}`;
-                    });
-                }
-                
-                function getLayerTransform(index) {
-                    const transforms = [
-                        'translateZ(-2px) scale(1.2)',
-                        'translateZ(-1px) scale(1.1)',
-                        'translateZ(0) scale(1)'
-                    ];
-                    return transforms[index] || '';
-                }
-                
-                // Event listeners for parallax
-                if (window.innerWidth > 768) {
-                    document.addEventListener('mousemove', handleMouseMove);
-                } else {
-                    window.addEventListener('scroll', handleScroll);
-                }
-                
-                // Handle resize
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth > 768) {
-                        document.removeEventListener('scroll', handleScroll);
-                        document.addEventListener('mousemove', handleMouseMove);
-                    } else {
-                        document.removeEventListener('mousemove', handleMouseMove);
-                        window.addEventListener('scroll', handleScroll);
-                    }
-                });
-            }
-            
-            // Meteor Effect
-            function createMeteorShower() {
-                function createMeteor() {
-                    const meteor = document.createElement('div');
-                    meteor.className = 'meteor';
-                    
-                    // Random position
-                    const startX = Math.random() * 100;
-                    const startY = Math.random() * 100;
-                    
-                    meteor.style.left = `${startX}%`;
-                    meteor.style.top = `${startY}%`;
-                    
-                    // Random size
-                    const size = Math.random() * 2 + 1;
-                    meteor.style.width = `${size}px`;
-                    meteor.style.height = `${size}px`;
-                    
-                    // Random speed
-                    const duration = Math.random() * 3 + 2;
-                    
-                    meteor.style.animation = `meteorFall ${duration}s linear forwards`;
-                    
-                    meteorShower.appendChild(meteor);
-                    
-                    // Remove after animation
-                    setTimeout(() => {
-                        if (meteor.parentNode) {
-                            meteor.remove();
-                        }
-                    }, duration * 1000);
-                }
-                
-                // Create meteors continuously
-                function generateMeteors() {
-                    createMeteor();
-                    const nextDelay = Math.random() * 1500 + 500; // 0.5-2 seconds
-                    setTimeout(generateMeteors, nextDelay);
-                }
-                
-                // Start generating meteors
-                generateMeteors();
-            }
-            
-            // URL interaction
-            function initUrlInteraction() {
-                const urlElement = document.getElementById('websiteUrl');
-                
-                urlElement.addEventListener('click', function() {
-                    const url = this.textContent;
-                    navigator.clipboard.writeText(url).then(() => {
-                        const original = this.textContent;
-                        this.textContent = 'URL disalin ke clipboard!';
-                        this.style.color = '#4B877B';
-                        
-                        setTimeout(() => {
-                            this.textContent = original;
-                            this.style.color = '#ffffff';
-                        }, 2000);
-                    });
-                });
-                
-                urlElement.style.cursor = 'pointer';
-                urlElement.title = 'Klik untuk menyalin URL';
-            }
-            
-            // Initialize everything
-            startCountdown();
-            initParallax();
-            createMeteorShower();
-            initUrlInteraction();
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.code === 'Escape') {
-                    clearInterval(countdownInterval);
-                    countdownElement.parentElement.innerHTML = 
-                        'Pengalihan dihentikan. Silakan klik tombol di atas.';
-                }
-                if (e.code === 'Enter' && document.activeElement.id === 'redirectButton') {
-                    redirectToNewSite();
-                }
-            });
-        });
-    </script>
+      <!-- ── Tab: Pure Status ── -->
+      <div class="tab-pane" id="tab-purestatus">
+        <div class="subtab-row">
+          <div class="subtab active" data-subtab="upload-file">📁 Upload File</div>
+          <div class="subtab" data-subtab="via-link">🔗 Via Link</div>
+        </div>
+
+        <!-- Subtab: Upload File -->
+        <div class="subtab-pane active" id="subtab-upload-file">
+          <div class="card">
+            <div class="card-title">Pilih Tipe File</div>
+            <div class="ftype-toggle">
+              <div class="ftype-btn active" data-ftype="image">🖼️ Gambar</div>
+              <div class="ftype-btn" data-ftype="video">🎬 Video</div>
+              <div class="ftype-btn" data-ftype="both">📦 Gambar & Video</div>
+            </div>
+
+            <div class="card-title" style="margin-top:8px;">Mode Kirim</div>
+            <div class="mode-toggle">
+              <div class="mode-btn active" data-mode="fast">⚡ Fast</div>
+              <div class="mode-btn" data-mode="fix">🔧 Fix</div>
+            </div>
+
+            <div class="card-title">Upload File</div>
+            <input type="file" id="file-input" accept="image/*,video/*">
+            <div class="upload-area" id="upload-area">
+              <div class="upload-icon">📂</div>
+              <div class="upload-label">Klik atau drag & drop file di sini</div>
+              <div class="upload-hint">Max 100MB · Gambar & Video didukung</div>
+            </div>
+
+            <div class="preview-wrap" id="preview-wrap"></div>
+
+            <div class="progress-wrap" id="progress-wrap">
+              <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+              <div class="progress-pct" id="progress-pct">0%</div>
+            </div>
+
+            <div class="flex-row mt-md">
+              <button class="btn btn-primary" id="btn-upload" disabled>📤 Upload & Kirim</button>
+              <button class="btn btn-ghost btn-sm" id="btn-reset-upload" style="display:none">↺ Upload Lagi</button>
+            </div>
+
+            <div class="result-box" id="result-upload"></div>
+          </div>
+        </div>
+
+        <!-- Subtab: Via Link -->
+        <div class="subtab-pane" id="subtab-via-link">
+          <div class="card">
+            <div class="card-title">Mode Kirim</div>
+            <div class="mode-toggle" id="mode-toggle-link">
+              <div class="mode-btn active" data-mode="fast">⚡ Fast</div>
+              <div class="mode-btn" data-mode="fix">🔧 Fix</div>
+            </div>
+
+            <div class="field" style="margin-top:8px;">
+              <label>URL Media</label>
+              <input type="url" id="media-url" placeholder="https://example.com/media.jpg">
+            </div>
+
+            <button class="btn btn-primary" id="btn-send-link">📨 Kirim Status</button>
+
+            <div class="result-box" id="result-link"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Tab: Sessions ── -->
+      <div class="tab-pane" id="tab-sessions">
+        <div class="flex-between" style="margin-bottom:16px;">
+          <div class="card-title" style="margin-bottom:0;">Daftar Sesi Aktif</div>
+          <button class="btn btn-ghost btn-sm" id="btn-refresh-sessions">🔄 Refresh</button>
+        </div>
+        <div id="sessions-list">
+          <div style="text-align:center;padding:48px;color:var(--text-dim);font-size:.85rem;">
+            Klik Refresh untuk memuat sesi
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  CONFIG — Edit sesuai kebutuhan
+// ─────────────────────────────────────────────
+const CONFIG = {
+  API_KEY: localStorage.getItem('pure_api_key') || '',
+  BASE_URL: localStorage.getItem('pure_base_url') || '',
+  CF_WORKER_URL: 'https://your-worker.your-subdomain.workers.dev/upload',
+  POLL_INTERVAL: 2500,
+  PAIR_TIMEOUT: 120,       // seconds
+};
+
+// ─────────────────────────────────────────────
+//  State
+// ─────────────────────────────────────────────
+let state = {
+  number: localStorage.getItem('pure_number') || '',
+  pairingCode: null,
+  sessionStatus: null,
+  pollTimer: null,
+  countdownTimer: null,
+  countdownSec: CONFIG.PAIR_TIMEOUT,
+  selectedFile: null,
+  fileType: 'image',
+  modeUpload: 'fast',
+  modeLink: 'fast',
+  requests: parseInt(localStorage.getItem('pure_requests') || '0'),
+  success: parseInt(localStorage.getItem('pure_success') || '0'),
+};
+
+// ─────────────────────────────────────────────
+//  Helpers
+// ─────────────────────────────────────────────
+function headers() {
+  return {
+    'Content-Type': 'application/json',
+    'x-api-key': getApiKey(),
+  };
+}
+function getApiKey() { return document.getElementById('api-key').value.trim() || CONFIG.API_KEY; }
+function getBaseUrl() { return (document.getElementById('base-url').value.trim() || CONFIG.BASE_URL).replace(/\/$/, ''); }
+function getNumber() { return document.getElementById('wa-number').value.trim() || state.number; }
+
+function saveToStorage() {
+  if (state.number) localStorage.setItem('pure_number', state.number);
+  const apiKey = document.getElementById('api-key').value.trim();
+  if (apiKey) localStorage.setItem('pure_api_key', apiKey);
+  const url = document.getElementById('base-url').value.trim();
+  if (url) localStorage.setItem('pure_base_url', url);
+  localStorage.setItem('pure_requests', state.requests);
+  localStorage.setItem('pure_success', state.success);
+}
+
+function formatBytes(b) {
+  if (!b) return '—';
+  if (b < 1024) return b + ' B';
+  if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+  return (b/(1024*1024)).toFixed(2) + ' MB';
+}
+
+// ─────────────────────────────────────────────
+//  Toast
+// ─────────────────────────────────────────────
+function toast(msg, type='info', duration=3500) {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  const c = document.getElementById('toast-container');
+  c.appendChild(el);
+  el.onclick = () => el.remove();
+  setTimeout(() => {
+    el.style.animation = 'toastOut .3s ease forwards';
+    setTimeout(() => el.remove(), 300);
+  }, duration);
+}
+
+// ─────────────────────────────────────────────
+//  Navigation
+// ─────────────────────────────────────────────
+const titles = {pairing:'Pairing', purestatus:'Pure Status', sessions:'Sessions'};
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    const tab = el.dataset.tab;
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('page-title').textContent = titles[tab] || tab;
+    if (tab === 'sessions') loadSessions();
+  });
+});
+
+document.querySelectorAll('.subtab').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.subtab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.subtab-pane').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('subtab-' + el.dataset.subtab).classList.add('active');
+  });
+});
+
+// ─────────────────────────────────────────────
+//  Stats UI
+// ─────────────────────────────────────────────
+function updateStats(connected=0, pairing=0) {
+  document.getElementById('stat-connected').textContent = connected;
+  document.getElementById('stat-pairing').textContent = pairing;
+  document.getElementById('stat-requests').textContent = state.requests;
+  document.getElementById('stat-success').textContent = state.success;
+}
+
+function incRequest(success=false) {
+  state.requests++;
+  if (success) state.success++;
+  saveToStorage();
+  updateStats();
+}
+
+// ─────────────────────────────────────────────
+//  Number Sync
+// ─────────────────────────────────────────────
+function syncNumber(num) {
+  if (num) {
+    state.number = num;
+    document.getElementById('topbar-number').textContent = num;
+    document.getElementById('wa-number').value = num;
+    localStorage.setItem('pure_number', num);
+  }
+}
+
+function setTopbarStatus(s) {
+  const el = document.getElementById('topbar-status');
+  el.textContent = s;
+}
+
+// ─────────────────────────────────────────────
+//  Badge helper
+// ─────────────────────────────────────────────
+function badgeFor(status) {
+  const cls = {
+    connected: 'badge-connected',
+    pairing: 'badge-pairing',
+    disconnected: 'badge-disconnected',
+    'not found': 'badge-disconnected',
+  }[status] || 'badge-default';
+  return `<span class="badge ${cls}"><span class="badge-dot"></span>${status}</span>`;
+}
+
+// ─────────────────────────────────────────────
+//  PAIRING TAB
+// ─────────────────────────────────────────────
+document.getElementById('btn-connect').addEventListener('click', startPairing);
+document.getElementById('btn-stop').addEventListener('click', stopSession);
+
+function showPairingCode(code) {
+  const area = document.getElementById('pairing-area');
+  area.innerHTML = `
+    <div class="pairing-code-box" id="code-box">
+      <span class="copy-flash">✓ copied</span>
+      <div class="pairing-code" id="pair-code">${code}</div>
+      <div class="pairing-hint">klik untuk copy ke clipboard</div>
+    </div>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
+    <div class="timer-text" id="timer-text">${CONFIG.PAIR_TIMEOUT}s tersisa</div>
+    <div style="margin-top:12px;font-size:.78rem;color:var(--text-muted);">
+      Status: <span id="pair-status-text">${badgeFor('pairing')}</span>
+    </div>
+  `;
+  document.getElementById('code-box').addEventListener('click', () => {
+    navigator.clipboard.writeText(code).then(() => {
+      document.getElementById('code-box').classList.add('copied');
+      setTimeout(() => document.getElementById('code-box')?.classList.remove('copied'), 1500);
+      toast('Kode pairing berhasil disalin!', 'success');
+    });
+  });
+}
+
+function showConnectedState(num) {
+  const area = document.getElementById('pairing-area');
+  area.innerHTML = `
+    <div style="text-align:center;padding:32px 0;">
+      <div style="font-size:3rem;margin-bottom:12px;">✅</div>
+      <div style="font-family:var(--mono);color:var(--teal-light);font-size:1rem;margin-bottom:6px;">${num}</div>
+      <div>${badgeFor('connected')}</div>
+      <div style="color:var(--text-dim);font-size:.78rem;margin-top:12px;">Sesi aktif dan siap digunakan</div>
+    </div>
+  `;
+}
+
+async function startPairing() {
+  const num = getNumber();
+  const baseUrl = getBaseUrl();
+  if (!num) { toast('Masukkan nomor WhatsApp dulu!', 'error'); return; }
+  if (!baseUrl) { toast('Masukkan Base URL VPS dulu!', 'error'); return; }
+  syncNumber(num);
+  saveToStorage();
+
+  const btn = document.getElementById('btn-connect');
+  btn.disabled = true; btn.textContent = '⌛ Menghubungkan...';
+  setTopbarStatus('connecting...');
+
+  try {
+    const res = await fetch(`${baseUrl}/session/create`, {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({ number: num }),
+    });
+    incRequest(res.ok);
+    const data = await res.json();
+    const code = data.pairingCode || data.code || data.pairing_code;
+    if (!code) throw new Error(data.message || 'Tidak ada kode pairing');
+    state.pairingCode = code;
+    showPairingCode(code);
+    document.getElementById('btn-stop').style.display = '';
+    startCountdown();
+    startPolling(num, baseUrl);
+    toast('Kode pairing berhasil dibuat!', 'success');
+  } catch(e) {
+    toast('Gagal membuat sesi: ' + e.message, 'error');
+    btn.disabled = false; btn.textContent = '🔗 Hubungkan';
+    setTopbarStatus('error');
+  }
+}
+
+function startCountdown() {
+  state.countdownSec = CONFIG.PAIR_TIMEOUT;
+  clearInterval(state.countdownTimer);
+  state.countdownTimer = setInterval(() => {
+    state.countdownSec--;
+    const pct = (state.countdownSec / CONFIG.PAIR_TIMEOUT * 100).toFixed(1);
+    const bar = document.getElementById('timer-bar');
+    const txt = document.getElementById('timer-text');
+    if (bar) bar.style.width = pct + '%';
+    if (txt) txt.textContent = state.countdownSec + 's tersisa';
+    if (state.countdownSec <= 0) {
+      clearInterval(state.countdownTimer);
+      toast('Waktu pairing habis!', 'error');
+    }
+  }, 1000);
+}
+
+function startPolling(num, baseUrl) {
+  clearInterval(state.pollTimer);
+  state.pollTimer = setInterval(async () => {
+    try {
+      const res = await fetch(`${baseUrl}/session/status/${num}`, { headers: headers() });
+      const data = await res.json();
+      const status = data.status || data.state || '';
+      state.sessionStatus = status;
+      setTopbarStatus(status);
+      const el = document.getElementById('pair-status-text');
+      if (el) el.innerHTML = badgeFor(status);
+      if (status === 'connected') {
+        clearInterval(state.pollTimer);
+        clearInterval(state.countdownTimer);
+        showConnectedState(num);
+        toast('✅ WhatsApp berhasil terhubung!', 'success', 5000);
+        setTopbarStatus('connected');
+        enableConnectBtn();
+        updateStats();
+      }
+    } catch(e) { /* silently retry */ }
+  }, CONFIG.POLL_INTERVAL);
+}
+
+async function stopSession() {
+  const num = getNumber();
+  const baseUrl = getBaseUrl();
+  if (!num || !baseUrl) { toast('Nomor / URL tidak ada', 'error'); return; }
+  clearInterval(state.pollTimer);
+  clearInterval(state.countdownTimer);
+  try {
+    const res = await fetch(`${baseUrl}/session/stop/${num}`, { method: 'DELETE', headers: headers() });
+    incRequest(res.ok);
+    toast('Sesi dihentikan', 'info');
+  } catch(e) { toast('Gagal stop sesi: ' + e.message, 'error'); }
+  document.getElementById('pairing-area').innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text-dim);font-size:.85rem;">Sesi dihentikan</div>`;
+  document.getElementById('btn-stop').style.display = 'none';
+  enableConnectBtn();
+  setTopbarStatus('stopped');
+}
+
+function enableConnectBtn() {
+  const btn = document.getElementById('btn-connect');
+  btn.disabled = false; btn.textContent = '🔗 Hubungkan';
+}
+
+// ─────────────────────────────────────────────
+//  PURE STATUS — Upload File
+// ─────────────────────────────────────────────
+// File type buttons
+document.querySelectorAll('.ftype-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.ftype-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.fileType = b.dataset.ftype;
+    updateAccept();
+  });
+});
+
+// Mode buttons (upload)
+document.querySelectorAll('#subtab-upload-file .mode-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#subtab-upload-file .mode-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.modeUpload = b.dataset.mode;
+  });
+});
+
+// Mode buttons (link)
+document.querySelectorAll('#mode-toggle-link .mode-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#mode-toggle-link .mode-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.modeLink = b.dataset.mode;
+  });
+});
+
+function updateAccept() {
+  const fi = document.getElementById('file-input');
+  if (state.fileType === 'image') fi.accept = 'image/*';
+  else if (state.fileType === 'video') fi.accept = 'video/*';
+  else fi.accept = 'image/*,video/*';
+}
+
+const uploadArea = document.getElementById('upload-area');
+const fileInput = document.getElementById('file-input');
+
+uploadArea.addEventListener('click', () => fileInput.click());
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault(); uploadArea.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) handleFileSelect(f);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
+});
+
+function handleFileSelect(file) {
+  if (file.size > 100 * 1024 * 1024) { toast('File terlalu besar (max 100MB)', 'error'); return; }
+  state.selectedFile = file;
+  const wrap = document.getElementById('preview-wrap');
+  const isImage = file.type.startsWith('image/');
+  const isVideo = file.type.startsWith('video/');
+  const url = URL.createObjectURL(file);
+  let html = '';
+  if (isImage) html += `<img class="preview-img" src="${url}" alt="preview">`;
+  else if (isVideo) html += `<video class="preview-video" src="${url}" controls></video>`;
+  html += `<div class="preview-meta">
+    <span class="preview-chip">${file.name}</span>
+    <span class="preview-chip">${formatBytes(file.size)}</span>
+    <span class="preview-chip">${file.type || 'unknown'}</span>
+  </div>`;
+  wrap.innerHTML = html;
+  wrap.classList.add('show');
+  document.getElementById('btn-upload').disabled = false;
+  document.getElementById('result-upload').classList.remove('show');
+}
+
+document.getElementById('btn-upload').addEventListener('click', doUploadAndSend);
+document.getElementById('btn-reset-upload').addEventListener('click', resetUpload);
+
+function resetUpload() {
+  state.selectedFile = null;
+  fileInput.value = '';
+  document.getElementById('preview-wrap').classList.remove('show');
+  document.getElementById('progress-wrap').classList.remove('show');
+  document.getElementById('result-upload').classList.remove('show');
+  document.getElementById('btn-upload').disabled = true;
+  document.getElementById('btn-reset-upload').style.display = 'none';
+}
+
+async function doUploadAndSend() {
+  if (!state.selectedFile) { toast('Pilih file dulu!', 'error'); return; }
+  const num = state.number || getNumber();
+  const baseUrl = getBaseUrl();
+  if (!num) { toast('Nomor WA belum tersambung!', 'error'); return; }
+  if (!baseUrl) { toast('Base URL belum diisi!', 'error'); return; }
+
+  const btn = document.getElementById('btn-upload');
+  btn.disabled = true; btn.textContent = '⏳ Uploading...';
+
+  const pw = document.getElementById('progress-wrap');
+  const pf = document.getElementById('progress-fill');
+  const pp = document.getElementById('progress-pct');
+  pw.classList.add('show');
+
+  try {
+    // Step 1: Upload to CF Worker
+    const mediaUrl = await uploadToWorker(state.selectedFile, (pct) => {
+      pf.style.width = pct + '%';
+      pp.textContent = pct.toFixed(0) + '%';
+    });
+    pf.style.width = '100%'; pp.textContent = '100%';
+    toast('Upload selesai, mengirim ke WA...', 'info');
+
+    // Step 2: Send to /purestatus
+    const res = await fetch(`${baseUrl}/purestatus`, {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({
+        number: num,
+        url: mediaUrl,
+        mode: state.modeUpload,
+        type: state.fileType,
+      }),
+    });
+    incRequest(res.ok);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || res.statusText);
+
+    showResult('result-upload', mediaUrl, data, state.selectedFile.size, state.modeUpload);
+    toast('✅ Status berhasil dikirim!', 'success');
+    document.getElementById('btn-reset-upload').style.display = '';
+  } catch(e) {
+    toast('Gagal: ' + e.message, 'error');
+    incRequest(false);
+  }
+  btn.disabled = false; btn.textContent = '📤 Upload & Kirim';
+}
+
+async function uploadToWorker(file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const form = new FormData();
+    form.append('file', file);
+    xhr.open('POST', CONFIG.CF_WORKER_URL);
+    xhr.upload.addEventListener('progress', e => {
+      if (e.lengthComputable) onProgress((e.loaded / e.total) * 100);
+    });
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const d = JSON.parse(xhr.responseText);
+          const url = d.url || d.downloadLink || d.downloadLinkEncoded || d.link;
+          if (!url) throw new Error('URL tidak ditemukan di respons');
+          resolve(url);
+        } catch(e) { reject(e); }
+      } else {
+        reject(new Error('Upload gagal: ' + xhr.status));
+      }
+    };
+    xhr.onerror = () => reject(new Error('Network error saat upload'));
+    xhr.send(form);
+  });
+}
+
+// ─────────────────────────────────────────────
+//  PURE STATUS — Via Link
+// ─────────────────────────────────────────────
+document.getElementById('btn-send-link').addEventListener('click', doSendLink);
+
+async function doSendLink() {
+  const url = document.getElementById('media-url').value.trim();
+  const num = state.number || getNumber();
+  const baseUrl = getBaseUrl();
+  if (!url) { toast('Masukkan URL media!', 'error'); return; }
+  if (!num) { toast('Nomor WA belum tersambung!', 'error'); return; }
+  if (!baseUrl) { toast('Base URL belum diisi!', 'error'); return; }
+
+  const btn = document.getElementById('btn-send-link');
+  btn.disabled = true; btn.textContent = '⌛ Mengirim...';
+
+  try {
+    const res = await fetch(`${baseUrl}/purestatus`, {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({ number: num, url, mode: state.modeLink }),
+    });
+    incRequest(res.ok);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || res.statusText);
+    showResult('result-link', url, data, null, state.modeLink);
+    toast('✅ Status berhasil dikirim!', 'success');
+  } catch(e) {
+    toast('Gagal: ' + e.message, 'error');
+    incRequest(false);
+  }
+  btn.disabled = false; btn.textContent = '📨 Kirim Status';
+}
+
+function showResult(id, url, data, size, mode) {
+  const box = document.getElementById(id);
+  const type = data.type || data.mediaType || '—';
+  const info = data.info || data.message || '—';
+  box.innerHTML = `
+    <div style="font-family:var(--mono);font-size:.72rem;color:var(--teal-light);margin-bottom:12px;">▸ HASIL PENGIRIMAN</div>
+    <div class="result-row"><span class="result-key">URL Media</span><span class="result-val" title="${url}">${url.length > 40 ? url.slice(0,40)+'…' : url}</span></div>
+    <div class="result-row"><span class="result-key">Tipe Media</span><span class="result-val">${type}</span></div>
+    ${size ? `<div class="result-row"><span class="result-key">Ukuran</span><span class="result-val">${formatBytes(size)}</span></div>` : ''}
+    <div class="result-row"><span class="result-key">Mode</span><span class="result-val">${mode}</span></div>
+    <div class="result-row"><span class="result-key">Info</span><span class="result-val">${info}</span></div>
+  `;
+  box.classList.add('show');
+}
+
+// ─────────────────────────────────────────────
+//  SESSIONS TAB
+// ─────────────────────────────────────────────
+document.getElementById('btn-refresh-sessions').addEventListener('click', loadSessions);
+
+async function loadSessions() {
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) { toast('Base URL belum diisi!', 'error'); return; }
+  const list = document.getElementById('sessions-list');
+  list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:.82rem;">⌛ Memuat...</div>';
+  try {
+    const res = await fetch(`${baseUrl}/session/list`, { headers: headers() });
+    incRequest(res.ok);
+    const data = await res.json();
+    const sessions = Array.isArray(data) ? data : (data.sessions || data.data || []);
+    let connected = 0, pairing = 0;
+    if (!sessions.length) {
+      list.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text-dim);font-size:.82rem;">Tidak ada sesi aktif</div>';
+    } else {
+      list.innerHTML = sessions.map(s => {
+        const num = s.number || s.phone || s.id || '—';
+        const status = s.status || s.state || 'unknown';
+        if (status === 'connected') connected++;
+        if (status === 'pairing') pairing++;
+        return `<div class="session-item">
+          <span class="session-num">${num}</span>
+          ${badgeFor(status)}
+          <div class="session-actions">
+            <button class="btn btn-danger btn-sm" onclick="stopNum('${num}')">⛔ Stop</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    updateStats(connected, pairing);
+  } catch(e) {
+    list.innerHTML = '<div style="text-align:center;padding:48px;color:var(--danger);font-size:.82rem;">Gagal memuat sesi: '+e.message+'</div>';
+    toast('Gagal memuat sesi', 'error');
+  }
+}
+
+async function stopNum(num) {
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return;
+  try {
+    await fetch(`${baseUrl}/session/stop/${num}`, { method: 'DELETE', headers: headers() });
+    incRequest(true);
+    toast(`Sesi ${num} dihentikan`, 'info');
+    loadSessions();
+  } catch(e) { toast('Gagal stop: ' + e.message, 'error'); }
+}
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+function init() {
+  // Restore from localStorage
+  const savedNum = localStorage.getItem('pure_number');
+  const savedKey = localStorage.getItem('pure_api_key');
+  const savedUrl = localStorage.getItem('pure_base_url');
+  if (savedNum) { document.getElementById('wa-number').value = savedNum; syncNumber(savedNum); }
+  if (savedKey) document.getElementById('api-key').value = savedKey;
+  if (savedUrl) document.getElementById('base-url').value = savedUrl;
+  updateStats();
+
+  // Auto-check session status on load
+  if (savedNum && savedUrl && savedKey) {
+    fetch(`${savedUrl}/session/status/${savedNum}`, {
+      headers: { 'x-api-key': savedKey }
+    }).then(r => r.json()).then(data => {
+      const s = data.status || data.state || '';
+      setTopbarStatus(s);
+      if (s === 'connected') showConnectedState(savedNum);
+    }).catch(() => {});
+  }
+}
+
+init();
+</script>
 </body>
 </html>
